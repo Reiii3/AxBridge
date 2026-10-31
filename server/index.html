@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AxBridge test</title>
+<style>
+:root{color-scheme:dark light}
+body{font:15px/1.5 system-ui,sans-serif;margin:0;padding:16px;max-width:720px;margin-inline:auto;background:#101418;color:#e6e9ec}
+h1{font-size:20px;margin:0 0 4px}.sub{opacity:.7;margin:0 0 16px}
+label{display:block;font-size:12px;opacity:.7;margin:12px 0 4px}
+input,button{font:inherit;padding:10px 12px;border-radius:8px;border:1px solid #3a4550;background:#18202a;color:inherit}
+input{width:100%;box-sizing:border-box;font-family:ui-monospace,monospace}
+button{background:#3ddc84;color:#06210f;border:0;font-weight:600;margin-top:10px}
+pre{background:#0a0d10;border:1px solid #2a333c;border-radius:8px;padding:12px;white-space:pre-wrap;word-break:break-word;min-height:120px;font-size:13px}
+.ok{color:#3ddc84}.bad{color:#ff6b6b}.err{color:#ffb86b}
+</style></head><body>
+<h1>AxBridge</h1><p class="sub">Browser → shell AxManager. <span id="st">checking…</span></p>
+<label>Token</label><input id="tok" autocomplete="off" spellcheck="false" placeholder="paste token">
+<label>Command</label><input id="cmd" value="getprop ro.product.model" autocomplete="off" spellcheck="false">
+<button id="run">Run</button>
+<pre id="out">—</pre>
+<script>
+const $=id=>document.getElementById(id);
+if(location.hash.startsWith("#token=")){
+  try{localStorage.setItem("axbridge_token",location.hash.slice(7))}catch{}
+  history.replaceState(null,"",location.pathname);
+}
+try{$("tok").value=localStorage.getItem("axbridge_token")||""}catch{}
+fetch("/health").then(r=>r.ok?($("st").textContent="server online",$("st").className="ok"):0)
+  .catch(()=>{$("st").textContent="offline";$("st").className="bad"});
+async function run(){
+  const t=$("tok").value.trim(); try{localStorage.setItem("axbridge_token",t)}catch{}
+  $("out").textContent="…";
+  try{
+    const r=await fetch("/exec",{method:"POST",
+      headers:{"Content-Type":"application/json",Authorization:"Bearer "+t},
+      body:JSON.stringify({cmd:$("cmd").value})});
+    if(r.status===401){$("out").textContent="Token salah.";return}
+    if(!r.ok){$("out").textContent="HTTP "+r.status+": "+await r.text();return}
+    const j=await r.json();
+    $("out").textContent="";
+    const add=(txt,c)=>{if(!txt)return;const s=document.createElement("span");s.className=c;s.textContent=txt;$("out").append(s)};
+    add(j.stdout,"");add(j.stderr,"err");add("\n[exit "+j.errno+"]","ok");
+  }catch(e){$("out").textContent="Fetch error: "+e.message}
+}
+$("run").onclick=run;$("cmd").onkeydown=e=>{if(e.key==="Enter")run()};
+</script></body></html>

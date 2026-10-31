@@ -1,0 +1,5 @@
+dist/
+plugin/system/bin/axbridge-arm
+plugin/system/bin/axbridge-arm64
+token
+*.log

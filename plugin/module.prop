@@ -1,0 +1,7 @@
+id=axbridge
+name=AxBridge
+version=v0.1.3-test
+versionCode=4
+author=jaxquartero
+description=Local HTTP bridge: run AxManager shell commands from a normal browser (token + origin protected)
+axeronPlugin=19100
