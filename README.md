@@ -110,6 +110,22 @@ plugin/    AxManager plugin: module.prop, scripts, WebUI (no binaries)
 scripts/   package.sh (builds the flashable ZIP)
 ```
 
+The plugin's WebUI is plain HTML, CSS and ES modules, no build step:
+
+```
+plugin/webroot/
+├── index.html          markup only
+├── css/
+│   ├── tokens.css      colors, radii, fonts (light + dark)
+│   ├── base.css        reset, page layout, top bar, titles
+│   └── components.css  status card, rows, form field, buttons, snackbar
+└── js/
+    ├── main.js         entry point, wires the modules together
+    ├── ctl.js          runs ctl.sh through ksu.exec
+    ├── status.js · server.js · origins.js · token.js · diagnostics.js   one file per screen section
+    └── layout.js · icons.js · dom.js                                    small shared helpers
+```
+
 ## Build from source
 
 Needs Go 1.24+ and `zip`.

@@ -1,0 +1,65 @@
+/*
+ * Design tokens: AOSP / Pixel Settings look (Material 3, Android blue).
+ * Colors follow the system light/dark mode. Change the look here, nowhere else.
+ */
+
+:root {
+  /* Surfaces */
+  --surface: #f1f3f9;
+  --item: #ffffff;
+
+  /* Text and outlines */
+  --on-surface: #1a1c20;
+  --on-surface-variant: #44474e;
+  --outline: #74777f;
+  --outline-variant: #c4c6d0;
+
+  /* Primary (Android blue) */
+  --primary: #0b57d0;
+  --on-primary: #ffffff;
+  --primary-container: #d3e3fd;
+  --on-primary-container: #041e49;
+
+  /* Error */
+  --error: #b3261e;
+  --on-error: #ffffff;
+  --error-container: #f9dedc;
+  --on-error-container: #410e0b;
+
+  /* Snackbar */
+  --inverse-surface: #2f3033;
+  --inverse-on-surface: #f1f0f4;
+
+  /* Type */
+  --font: "Google Sans Text", "Google Sans", Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Roboto Mono", monospace;
+
+  /* Shape */
+  --radius-group: 28px;
+  --radius-item: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #111318;
+    --item: #1e2025;
+
+    --on-surface: #e3e2e9;
+    --on-surface-variant: #c4c6d0;
+    --outline: #8e9099;
+    --outline-variant: #44474e;
+
+    --primary: #a8c7fa;
+    --on-primary: #062e6f;
+    --primary-container: #0842a0;
+    --on-primary-container: #d3e3fd;
+
+    --error: #f2b8b5;
+    --on-error: #601410;
+    --error-container: #8c1d18;
+    --on-error-container: #f9dedc;
+
+    --inverse-surface: #e3e2e9;
+    --inverse-on-surface: #2f3033;
+  }
+}

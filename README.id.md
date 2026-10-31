@@ -107,6 +107,22 @@ plugin/    Plugin AxManager: module.prop, script, WebUI (tanpa binary)
 scripts/   package.sh (membuat ZIP yang bisa di-flash)
 ```
 
+WebUI plugin berupa HTML, CSS, dan ES module biasa, tanpa build step:
+
+```
+plugin/webroot/
+├── index.html          markup saja
+├── css/
+│   ├── tokens.css      warna, radius, font (terang + gelap)
+│   ├── base.css        reset, layout halaman, top bar, judul
+│   └── components.css  kartu status, row, field form, tombol, snackbar
+└── js/
+    ├── main.js         entry point, menyambungkan semua modul
+    ├── ctl.js          menjalankan ctl.sh lewat ksu.exec
+    ├── status.js · server.js · origins.js · token.js · diagnostics.js   satu file per bagian layar
+    └── layout.js · icons.js · dom.js                                    helper kecil bersama
+```
+
 ## Build dari source
 
 Butuh Go 1.24+ dan `zip`.
