@@ -7,6 +7,9 @@ const NPM = "https://www.npmjs.com/package/axbridge-api";
 // GitHub Pages serves a project site under /<repo>/. Override with DOCS_BASE=/ for a custom domain.
 const base = process.env.DOCS_BASE || "/AxBridge/";
 
+// Public address of the site (no trailing slash). Used for the sitemap and canonical links.
+const SITE = process.env.DOCS_SITE || "https://reiii3.github.io/AxBridge";
+
 /** Sidebar for one language. `prefix` is "" for English and "/id" for Indonesian. */
 function sidebar(prefix, t) {
   return [
@@ -102,9 +105,19 @@ export default defineConfig({
   base,
   cleanUrls: false,
   lastUpdated: false,
+  sitemap: { hostname: `${SITE}/` },
+
+  // One canonical address per page, so search engines do not treat /x and /x.html as different pages.
+  transformPageData(pageData) {
+    const path = pageData.relativePath.replace(/index\.md$/, "").replace(/\.md$/, ".html");
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push(["link", { rel: "canonical", href: `${SITE}/${path}` }]);
+  },
   head: [
     ["link", { rel: "icon", type: "image/svg+xml", href: `${base}logo.svg` }],
     ["meta", { name: "theme-color", content: "#0b57d0" }],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:site_name", content: "AxBridge" }],
   ],
 
   locales: {
