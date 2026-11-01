@@ -1,3 +1,4 @@
+![AxBridge](docs/public/banner.png)
 # AxBridge
 
 **Jalankan perintah shell [AxManager](https://axmanager.app) dari browser biasa, atau dari website hosting-mu sendiri.**
