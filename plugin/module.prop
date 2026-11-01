@@ -1,7 +1,9 @@
 id=axbridge
 name=AxBridge
-version=v0.1.6-test
-versionCode=7
-author=jaxquartero
+version=v0.1.1-beta
+versionCode=1
+author=Reiieja
+credit=RiProG-id | Github: https://github.com/RiProG-id
 description=Local HTTP bridge: run AxManager shell commands from a normal browser (token + origin protected)
+banner=/banner.png
 axeronPlugin=19100

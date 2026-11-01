@@ -1,6 +1,12 @@
 # Sourced by the AxManager installer (not executed).
+ui_print "-------------------------------------------------------"
 ui_print "- AxBridge $(sed -n 's/^version=//p' "$MODPATH/module.prop")"
-ui_print "- ARCH=$ARCH API=$API AXERONVER=$AXERONVER"
+ui_print "- Developer: $(sed -n 's/^author=//p' "$MODPATH/module.prop")"
+ui_print "- Credit: $(sed -n 's/^credit=//p' "$MODPATH/module.prop")"
+ui_print "- ARCH: $ARCH"
+ui_print "- API: $API"
+ui_print "- AXERONVER: $AXERONVER"
+ui_print "-------------------------------------------------------"
 
 case "$ARCH" in
   arm64) KEEP=axbridge-arm64; DROP=axbridge-arm ;;
