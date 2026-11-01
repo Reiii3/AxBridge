@@ -184,16 +184,3 @@ Flags: `-addr` (default `127.0.0.1:8787`, keep it on loopback), `-origins` (comm
 ## Credits & license
 
 MIT. Original server concept: [RiProG-ADB-Panel](https://github.com/RiProG-id) by RiProG-id. See [LICENSE](LICENSE).
-
-## Publish the npm package
-
-The client in `client/` is published as `axbridge-api`.
-
-```sh
-cd client
-npm login
-npm publish --access public      # bump "version" in client/package.json first
-```
-
-Or let GitHub do it: add an `NPM_TOKEN` repository secret, then push a tag that matches the version, e.g.
-`git tag npm-v0.1.0 && git push origin npm-v0.1.0` ([workflow](.github/workflows/publish-npm.yml)).

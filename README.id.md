@@ -184,16 +184,3 @@ Flag: `-addr` (default `127.0.0.1:8787`, jangan keluar dari loopback), `-origins
 ## Kredit & lisensi
 
 MIT. Konsep server awal: [RiProG-ADB-Panel](https://github.com/RiProG-id) oleh RiProG-id. Lihat [LICENSE](LICENSE).
-
-## Publish paket npm
-
-Client di `client/` dipublish sebagai `axbridge-api`.
-
-```sh
-cd client
-npm login
-npm publish --access public      # naikkan "version" di client/package.json dulu
-```
-
-Atau biar GitHub yang mengerjakan: tambah secret repo `NPM_TOKEN`, lalu push tag yang cocok dengan versinya, mis.
-`git tag npm-v0.1.0 && git push origin npm-v0.1.0` ([workflow](.github/workflows/publish-npm.yml)).
