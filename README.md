@@ -58,14 +58,25 @@ Requirements: Android with AxManager (arm64 or arm). The plugin declares `axeron
 3. In the WebUI → **Token → Copy**, paste it into your site once (it is saved in `localStorage`).
 
 ```js
-import { exec, ping, setToken } from "./axbridge.js";
+import { exec, spawn, ping, setToken } from "./axbridge.js";
 
 if (!(await ping())) alert("AxBridge is not running");
 setToken("<token from the plugin WebUI>");
 
+// one-shot command
 const { errno, stdout, stderr } = await exec("getprop ro.product.model");
 console.log(stdout.trim());
+
+// long-running command, output arrives while it runs
+const child = spawn("logcat", ["-v", "brief"]);
+child.stdout.on("data", (text) => console.log(text));
+child.on("exit", (code) => console.log("exited", code));
+// child.kill();   // stops it on the device too
 ```
+
+The client has the same shape as the [`kernelsu`](https://www.npmjs.com/package/kernelsu) package
+(`exec`, `spawn`, `fullScreen`, `toast`), so code written for it keeps working. In a Vite project you can
+point the import at AxBridge with an alias: `resolve: { alias: { kernelsu: "/src/axbridge.js" } }`.
 
 The page must be opened **in the browser on the same device** (`127.0.0.1` is the device itself).
 Chrome/Chromium on Android is recommended; Chrome may show a "local network access" permission prompt the first time.
@@ -75,23 +86,37 @@ Safari does not allow https pages to call `http://127.0.0.1`.
 
 | Function | |
 | --- | --- |
-| `exec(cmd, { cwd?, timeout? })` | Runs `cmd` with `sh -c`. Returns `{ errno, stdout, stderr }` (same shape as `kernelsu`'s `exec`). `timeout` in seconds. |
+| `exec(cmd, { cwd?, env?, timeout? })` | Runs `cmd` with `sh -c`. Returns `{ errno, stdout, stderr }` (same shape as `kernelsu`'s `exec`). `timeout` in seconds (default 30, max 120). |
+| `spawn(cmd, args?, { cwd?, env?, timeout? })` | Starts a process and streams its output. Returns a `ChildProcess` with `stdout.on("data")`, `stderr.on("data")`, `on("exit", code)`, `on("error", err)` and `kill()`. With a non-empty `args` array the command runs directly (no shell); otherwise `cmd` is a shell line. `timeout` default 300 s, max 3600 s. `code` is `null` when killed or disconnected. |
+| `fullScreen(enable)` | Browser full screen (needs a user gesture). Does not throw if refused. |
+| `toast(message)` | Small message at the bottom of the page. |
 | `ping()` | `true` if the server answers. |
-| `setToken(t)` / `getToken()` | Token storage (`localStorage`). |
+| `setToken(t)` / `getToken()` / `clearToken()` | Token storage (`localStorage`, with an in-memory fallback). |
 | `setBaseUrl(url)` | Override `http://127.0.0.1:8787`. |
+| `BridgeError` | Thrown by `exec` and emitted by `spawn`. `error.code` is `network`, `unauthorized`, `forbidden` or `http`. |
 
-Errors: `wrong or missing token` (401), `not in the allowed list` (403), network failure = server not running or
-origin/permission blocked.
+Not included: `listPackages`, `getPackagesInfo`, `exit`, `moduleInfo`, `enableEdgeToEdge` (they need the AxManager WebView).
+Use `exec("pm list packages -3")` for package lists.
 
 ### HTTP API
 
 ```
 GET  /health                      -> {"ok":true}                     (no auth)
+
 POST /exec                        Authorization: Bearer <token>
      Content-Type: application/json
-     {"cmd":"id","cwd":"/","timeout":30}  -> {"errno":0,"stdout":"…","stderr":""}
+     {"cmd":"id","cwd":"/","env":{"A":"1"},"timeout":30}
+                                  -> {"errno":0,"stdout":"…","stderr":""}
+
+POST /spawn                       same headers; extra field "args":["-l"] (runs cmd directly, no shell)
+                                  -> application/x-ndjson, one JSON object per line:
+     {"t":"out","b":"<base64>"}   stdout chunk
+     {"t":"err","b":"<base64>"}   stderr chunk
+     {"t":"exit","code":0}        always the last line
 ```
-`errno` is the exit code; `124` means the command timed out.
+`errno` / `code` is the exit code; `124` means the command timed out. Closing the connection kills the process
+(and everything it started). `timeout` defaults: `/exec` 30 s (max 120), `/spawn` 300 s (max 3600).
+Chunks are base64 so characters split across reads survive; the client decodes them for you.
 
 ## Files on the device
 

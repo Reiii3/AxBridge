@@ -58,14 +58,25 @@ kalau server AxManager-mu lebih lama.
 3. Di WebUI → **Token → Copy**, tempel ke situsmu sekali saja (disimpan di `localStorage`).
 
 ```js
-import { exec, ping, setToken } from "./axbridge.js";
+import { exec, spawn, ping, setToken } from "./axbridge.js";
 
 if (!(await ping())) alert("AxBridge belum jalan");
 setToken("<token dari WebUI plugin>");
 
+// perintah sekali jalan
 const { errno, stdout, stderr } = await exec("getprop ro.product.model");
 console.log(stdout.trim());
+
+// perintah panjang, output datang selagi berjalan
+const child = spawn("logcat", ["-v", "brief"]);
+child.stdout.on("data", (text) => console.log(text));
+child.on("exit", (code) => console.log("selesai", code));
+// child.kill();   // menghentikannya di perangkat juga
 ```
+
+Bentuk client sama dengan paket [`kernelsu`](https://www.npmjs.com/package/kernelsu)
+(`exec`, `spawn`, `fullScreen`, `toast`), jadi kode yang ditulis untuknya tetap jalan. Di project Vite, arahkan
+import ke AxBridge lewat alias: `resolve: { alias: { kernelsu: "/src/axbridge.js" } }`.
 
 Halaman harus dibuka **di browser pada perangkat yang sama** (`127.0.0.1` adalah perangkat itu sendiri).
 Disarankan Chrome/Chromium Android; Chrome bisa menampilkan prompt izin "akses jaringan lokal" saat pertama kali.
@@ -75,20 +86,37 @@ Safari tidak mengizinkan halaman https memanggil `http://127.0.0.1`.
 
 | Fungsi | |
 | --- | --- |
-| `exec(cmd, { cwd?, timeout? })` | Menjalankan `cmd` dengan `sh -c`. Mengembalikan `{ errno, stdout, stderr }` (bentuk sama dengan `exec` di `kernelsu`). `timeout` dalam detik. |
+| `exec(cmd, { cwd?, env?, timeout? })` | Menjalankan `cmd` dengan `sh -c`. Mengembalikan `{ errno, stdout, stderr }` (bentuk sama dengan `exec` di `kernelsu`). `timeout` dalam detik (default 30, maks 120). |
+| `spawn(cmd, args?, { cwd?, env?, timeout? })` | Menjalankan proses dan mengalirkan outputnya. Mengembalikan `ChildProcess` dengan `stdout.on("data")`, `stderr.on("data")`, `on("exit", code)`, `on("error", err)`, dan `kill()`. Kalau `args` berisi, perintah dijalankan langsung (tanpa shell); kalau tidak, `cmd` dianggap baris shell. `timeout` default 300 dtk, maks 3600 dtk. `code` bernilai `null` kalau di-kill atau koneksi putus. |
+| `fullScreen(enable)` | Layar penuh browser (butuh interaksi pengguna). Tidak melempar error kalau ditolak. |
+| `toast(message)` | Pesan kecil di bagian bawah halaman. |
 | `ping()` | `true` kalau server menjawab. |
-| `setToken(t)` / `getToken()` | Penyimpanan token (`localStorage`). |
+| `setToken(t)` / `getToken()` / `clearToken()` | Penyimpanan token (`localStorage`, dengan cadangan di memori). |
 | `setBaseUrl(url)` | Ganti `http://127.0.0.1:8787`. |
+| `BridgeError` | Dilempar oleh `exec` dan di-emit oleh `spawn`. `error.code` berisi `network`, `unauthorized`, `forbidden`, atau `http`. |
+
+Tidak ada: `listPackages`, `getPackagesInfo`, `exit`, `moduleInfo`, `enableEdgeToEdge` (butuh WebView AxManager).
+Untuk daftar paket pakai `exec("pm list packages -3")`.
 
 ### API HTTP
 
 ```
 GET  /health                      -> {"ok":true}                     (tanpa auth)
+
 POST /exec                        Authorization: Bearer <token>
      Content-Type: application/json
-     {"cmd":"id","cwd":"/","timeout":30}  -> {"errno":0,"stdout":"…","stderr":""}
+     {"cmd":"id","cwd":"/","env":{"A":"1"},"timeout":30}
+                                  -> {"errno":0,"stdout":"…","stderr":""}
+
+POST /spawn                       header sama; field tambahan "args":["-l"] (cmd dijalankan langsung, tanpa shell)
+                                  -> application/x-ndjson, satu objek JSON per baris:
+     {"t":"out","b":"<base64>"}   potongan stdout
+     {"t":"err","b":"<base64>"}   potongan stderr
+     {"t":"exit","code":0}        selalu baris terakhir
 ```
-`errno` adalah exit code; `124` berarti perintah kena timeout.
+`errno` / `code` adalah exit code; `124` berarti kena timeout. Menutup koneksi akan mematikan proses (beserta
+semua anaknya). Default `timeout`: `/exec` 30 dtk (maks 120), `/spawn` 300 dtk (maks 3600).
+Potongan memakai base64 supaya karakter yang terbelah antar pembacaan tetap utuh; client yang mendekodenya.
 
 ## File di perangkat
 
