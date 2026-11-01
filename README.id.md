@@ -54,11 +54,11 @@ kalau server AxManager-mu lebih lama.
 
 1. Di WebUI plugin → **Allowed websites**, tambah origin situsmu, misalnya `https://myapp.vercel.app`
    (pakai `http://localhost:5173` untuk dev lokal di HP yang sama).
-2. Salin [`client/axbridge.js`](client/axbridge.js) (dan opsional [`axbridge.d.ts`](client/axbridge.d.ts)) ke project-mu.
+2. Pasang client: `npm i axbridge-api` (atau salin [`client/axbridge.js`](client/axbridge.js) dan opsional [`axbridge.d.ts`](client/axbridge.d.ts) ke project-mu).
 3. Di WebUI → **Token → Copy**, tempel ke situsmu sekali saja (disimpan di `localStorage`).
 
 ```js
-import { exec, spawn, ping, setToken } from "./axbridge.js";
+import { exec, spawn, ping, setToken } from "axbridge-api";
 
 if (!(await ping())) alert("AxBridge belum jalan");
 setToken("<token dari WebUI plugin>");
@@ -76,7 +76,7 @@ child.on("exit", (code) => console.log("selesai", code));
 
 Bentuk client sama dengan paket [`kernelsu`](https://www.npmjs.com/package/kernelsu)
 (`exec`, `spawn`, `fullScreen`, `toast`), jadi kode yang ditulis untuknya tetap jalan. Di project Vite, arahkan
-import ke AxBridge lewat alias: `resolve: { alias: { kernelsu: "/src/axbridge.js" } }`.
+import ke AxBridge lewat alias: `resolve: { alias: { kernelsu: "axbridge-api" } }`.
 
 Halaman harus dibuka **di browser pada perangkat yang sama** (`127.0.0.1` adalah perangkat itu sendiri).
 Disarankan Chrome/Chromium Android; Chrome bisa menampilkan prompt izin "akses jaringan lokal" saat pertama kali.
@@ -184,3 +184,16 @@ Flag: `-addr` (default `127.0.0.1:8787`, jangan keluar dari loopback), `-origins
 ## Kredit & lisensi
 
 MIT. Konsep server awal: [RiProG-ADB-Panel](https://github.com/RiProG-id) oleh RiProG-id. Lihat [LICENSE](LICENSE).
+
+## Publish paket npm
+
+Client di `client/` dipublish sebagai `axbridge-api`.
+
+```sh
+cd client
+npm login
+npm publish --access public      # naikkan "version" di client/package.json dulu
+```
+
+Atau biar GitHub yang mengerjakan: tambah secret repo `NPM_TOKEN`, lalu push tag yang cocok dengan versinya, mis.
+`git tag npm-v0.1.0 && git push origin npm-v0.1.0` ([workflow](.github/workflows/publish-npm.yml)).

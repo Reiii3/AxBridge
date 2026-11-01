@@ -1,0 +1,36 @@
+{
+  "name": "axbridge-api",
+  "version": "0.1.0",
+  "description": "Browser client for AxBridge: run AxManager shell commands from a normal browser, with a kernelsu-compatible exec/spawn API.",
+  "keywords": ["axmanager", "axbridge", "android", "kernelsu", "shell", "webui", "root"],
+  "license": "MIT",
+  "author": "<YOUR NAME>",
+  "homepage": "https://github.com/Reiii3/axbridge#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Reiii3/axbridge.git",
+    "directory": "client"
+  },
+  "bugs": "https://github.com/Reiii3/axbridge/issues",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./axbridge.js",
+  "module": "./axbridge.js",
+  "types": "./axbridge.d.ts",
+  "exports": {
+    ".": {
+      "types": "./axbridge.d.ts",
+      "default": "./axbridge.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "axbridge.js",
+    "axbridge.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

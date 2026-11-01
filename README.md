@@ -54,11 +54,11 @@ Requirements: Android with AxManager (arm64 or arm). The plugin declares `axeron
 
 1. In the plugin WebUI → **Allowed websites**, add your site's origin, e.g. `https://myapp.vercel.app`
    (use `http://localhost:5173` for local dev on the same phone).
-2. Copy [`client/axbridge.js`](client/axbridge.js) (and optionally [`axbridge.d.ts`](client/axbridge.d.ts)) into your project.
+2. Install the client: `npm i axbridge-api` (or copy [`client/axbridge.js`](client/axbridge.js) and optionally [`axbridge.d.ts`](client/axbridge.d.ts) into your project).
 3. In the WebUI → **Token → Copy**, paste it into your site once (it is saved in `localStorage`).
 
 ```js
-import { exec, spawn, ping, setToken } from "./axbridge.js";
+import { exec, spawn, ping, setToken } from "axbridge-api";
 
 if (!(await ping())) alert("AxBridge is not running");
 setToken("<token from the plugin WebUI>");
@@ -76,7 +76,7 @@ child.on("exit", (code) => console.log("exited", code));
 
 The client has the same shape as the [`kernelsu`](https://www.npmjs.com/package/kernelsu) package
 (`exec`, `spawn`, `fullScreen`, `toast`), so code written for it keeps working. In a Vite project you can
-point the import at AxBridge with an alias: `resolve: { alias: { kernelsu: "/src/axbridge.js" } }`.
+point the import at AxBridge with an alias: `resolve: { alias: { kernelsu: "axbridge-api" } }`.
 
 The page must be opened **in the browser on the same device** (`127.0.0.1` is the device itself).
 Chrome/Chromium on Android is recommended; Chrome may show a "local network access" permission prompt the first time.
@@ -130,7 +130,7 @@ Chunks are base64 so characters split across reads survive; the client decodes t
 
 ```
 server/    Go HTTP server (+ embedded test page) .......... the core
-client/    axbridge.js / axbridge.d.ts ................... browser client
+client/    axbridge.js / axbridge.d.ts ................... browser client, published to npm as axbridge-api
 plugin/    AxManager plugin: module.prop, scripts, WebUI (no binaries)
 scripts/   package.sh (builds the flashable ZIP)
 ```
@@ -184,3 +184,16 @@ Flags: `-addr` (default `127.0.0.1:8787`, keep it on loopback), `-origins` (comm
 ## Credits & license
 
 MIT. Original server concept: [RiProG-ADB-Panel](https://github.com/RiProG-id) by RiProG-id. See [LICENSE](LICENSE).
+
+## Publish the npm package
+
+The client in `client/` is published as `axbridge-api`.
+
+```sh
+cd client
+npm login
+npm publish --access public      # bump "version" in client/package.json first
+```
+
+Or let GitHub do it: add an `NPM_TOKEN` repository secret, then push a tag that matches the version, e.g.
+`git tag npm-v0.1.0 && git push origin npm-v0.1.0` ([workflow](.github/workflows/publish-npm.yml)).

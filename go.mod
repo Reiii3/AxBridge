@@ -1,3 +1,3 @@
-module github.com/Reiii3/AxBridge
+module github.com/Reiii3/axbridge
 
 go 1.24
