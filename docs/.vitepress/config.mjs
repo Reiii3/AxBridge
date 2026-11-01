@@ -116,6 +116,7 @@ export default defineConfig({
   head: [
     ["link", { rel: "icon", type: "image/svg+xml", href: `${base}logo.svg` }],
     ["meta", { name: "theme-color", content: "#0b57d0" }],
+    ["meta", { name: "google-site-verification", content: "DCwBEwfBftUzrpiCv2wclFTsQHYv8ZniPhdawVshyIU" }],
     ["meta", { property: "og:type", content: "website" }],
     ["meta", { property: "og:site_name", content: "AxBridge" }],
   ],
