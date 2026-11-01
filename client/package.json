@@ -4,7 +4,7 @@
   "description": "Browser client for AxBridge: run AxManager shell commands from a normal browser, with a kernelsu-compatible exec/spawn API.",
   "keywords": ["axmanager", "axbridge", "android", "kernelsu", "shell", "webui", "root"],
   "license": "MIT",
-  "author": "<YOUR NAME>",
+  "author": "Reiii3",
   "homepage": "https://github.com/Reiii3/axbridge#readme",
   "repository": {
     "type": "git",

@@ -2,7 +2,7 @@
 
 **Run [AxManager](https://axmanager.app) shell commands from a normal browser, or from your own hosted website.**
 
-[Bahasa Indonesia](README.id.md)
+[Bahasa Indonesia](README.id.md) · [Documentation](https://reiii3.github.io/AxBridge/) (source in [`docs/`](docs))
 
 AxManager's `ksu` / `Axeron` JavaScript objects only exist inside a plugin's own WebUI window. AxBridge is an
 AxManager plugin that starts a tiny HTTP server on the device (`127.0.0.1:8787`), so any web page opened in the

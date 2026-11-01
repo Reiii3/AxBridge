@@ -2,7 +2,7 @@
 
 **Jalankan perintah shell [AxManager](https://axmanager.app) dari browser biasa, atau dari website hosting-mu sendiri.**
 
-[English](README.md)
+[English](README.md) · [Dokumentasi](https://reiii3.github.io/AxBridge/id/) (sumber di [`docs/`](docs))
 
 Objek JavaScript `ksu` / `Axeron` milik AxManager hanya ada di jendela WebUI plugin. AxBridge adalah plugin AxManager
 yang menyalakan server HTTP kecil di perangkat (`127.0.0.1:8787`), sehingga halaman web apa pun yang dibuka di

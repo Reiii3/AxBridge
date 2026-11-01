@@ -3,3 +3,6 @@ plugin/system/bin/axbridge-arm
 plugin/system/bin/axbridge-arm64
 token
 *.log
+node_modules/
+docs/.vitepress/cache/
+*.tgz

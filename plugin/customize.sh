@@ -1,5 +1,5 @@
 # Sourced by the AxManager installer (not executed).
-ui_print "- AxBridge v0.1.0-test"
+ui_print "- AxBridge $(sed -n 's/^version=//p' "$MODPATH/module.prop")"
 ui_print "- ARCH=$ARCH API=$API AXERONVER=$AXERONVER"
 
 case "$ARCH" in
