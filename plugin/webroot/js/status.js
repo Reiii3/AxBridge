@@ -2,7 +2,7 @@ import { $ } from "./dom.js";
 import { ctl } from "./ctl.js";
 
 const VIEWS = {
-  running: { title: "Running", subtitle: "127.0.0.1:8787 · reachable from this device only" },
+  running: { title: "Running", subtitle: "Only On This Device" },
   stopped: { title: "Stopped", subtitle: "Tap Restart server to start it." },
   error: { title: "Script error", subtitle: "The plugin script could not run. Open diagnostics." },
 };
